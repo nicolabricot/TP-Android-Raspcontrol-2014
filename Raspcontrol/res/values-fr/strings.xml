@@ -1,0 +1,15 @@
+<resources>
+
+    <string name="action_settings">Paramètres</string>
+    <string name="app_name">Raspcontrol</string>
+    <string name="button_add">Ajouter</string>
+    <string name="button_quit">Quitter</string>
+    <string name="button_send">Envoyer</string>
+    <string name="edit_message">Entrer un message</string>
+    <string name="hello_world">Bonjour monde !</string>
+    <string name="hostname">Adresse réseau</string>
+    <string name="title_activity_display_message">Mon message</string>
+    <string name="title_activity_edit">EditActivity</string>
+    <string name="username">Nom d\'utilisateur</string>
+
+</resources>

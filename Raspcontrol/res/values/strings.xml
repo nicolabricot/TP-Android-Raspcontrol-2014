@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Raspcontrol</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="edit_message">Enter a message</string>
+    <string name="button_send">Send</string>
+    <string name="title_activity_display_message">My message</string>
+    <string name="button_quit">Quit</string>
+    <string name="button_add">Add</string>
+    <string name="button_save">Save</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="title_activity_edit">EditActivity</string>
+    <string name="hostname">Hostname</string>
+    <string name="username">Username</string>
+    <string name="hostname_placeholder">example.com or 127.0.0.1</string>
+    <string name="passwordToken">Token</string>
+    <string-array name="protocols">
+        <item >http</item>
+        <item >https</item>
+    </string-array>
+    <string name="protocol">Protocol</string>
+    <string name="name">Name</string>
+    <string name="name_placeholder">Sweety name</string>
+
+</resources>
