@@ -42,7 +42,7 @@ public class HomeActivity extends Activity {
 	
 	/** Called when the user clicks the Quit button */
 	public void quitApplication(View view) {
-		
+		finish();
 	}
 
 }
