@@ -1,0 +1,1 @@
+{"code":200,"hdd":[{"name":"\/","total":"7.25G","free":"4.95G","used":"2.3G","format":"ext4","percentage":"28","alert":"success"},{"name":"\/boot","total":"55.95M","free":"37.34M","used":"18.61M","format":"vfat","percentage":"34","alert":"success"}]}
