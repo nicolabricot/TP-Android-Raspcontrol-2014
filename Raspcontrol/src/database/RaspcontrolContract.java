@@ -28,7 +28,7 @@ public class RaspcontrolContract {
 	    		RaspEntry.COLUMN_NAME_PROTOCOL + TEXT_TYPE + COMMA_SEP +
 	    		RaspEntry.COLUMN_NAME_HOSTNAME + TEXT_TYPE + COMMA_SEP +
 	    		RaspEntry.COLUMN_NAME_USERNAME + TEXT_TYPE + COMMA_SEP +
-	    		RaspEntry.COLUMN_NAME_TOKEN + TEXT_TYPE + COMMA_SEP +
+	    		RaspEntry.COLUMN_NAME_TOKEN + TEXT_TYPE + 
 	    " )";
 
 	protected static final String SQL_DELETE_ENTRIES =

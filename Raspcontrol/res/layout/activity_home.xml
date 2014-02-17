@@ -37,6 +37,20 @@
         android:gravity="bottom"
         android:orientation="vertical" >
 
+        <ScrollView
+            android:id="@+id/scrollViewRasp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1" >
+
+            <LinearLayout
+                android:id="@+id/linearLayoutRasp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+            </LinearLayout>
+        </ScrollView>
+
         <Button
             android:id="@+id/button1"
             android:layout_width="match_parent"
@@ -50,7 +64,6 @@
             android:layout_height="wrap_content"
             android:onClick="quitApplication"
             android:text="@string/button_quit" />
-
     </LinearLayout>
 
 </LinearLayout>
