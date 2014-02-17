@@ -1,9 +1,18 @@
 package info.devenet.android.raspcontrol;
 
+import database.RaspDataBaseHelper;
+import database.RaspcontrolContract;
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.support.v4.app.NavUtils;
 
 public class EditActivity extends Activity {
@@ -47,6 +56,38 @@ public class EditActivity extends Activity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	/** Called when the user clicks the Save button */
+	public void saveRaspcontrolEntry(View view) {
+		RaspDataBaseHelper mDbHelper = new RaspDataBaseHelper(getBaseContext());
+		
+		// Gets the data repository in write mode
+		SQLiteDatabase db = mDbHelper.getWritableDatabase();
+		
+		// Create a new map of values, where column names are the keys
+		ContentValues values = new ContentValues();
+		EditText name = (EditText) this.findViewById(R.id.editTextName);
+		Spinner protocol = (Spinner) this.findViewById(R.id.spinnerProtocol);
+		EditText hostname = (EditText) this.findViewById(R.id.editTextHostname);
+		EditText username = (EditText) this.findViewById(R.id.editTextUsername);
+		EditText token = (EditText) this.findViewById(R.id.editTextToken);
+		values.put(RaspcontrolContract.RaspEntry.COLUMN_NAME_ENTRY_NAME, name.getText().toString());
+		values.put(RaspcontrolContract.RaspEntry.COLUMN_NAME_PROTOCOL, protocol.getSelectedItem().toString());
+		values.put(RaspcontrolContract.RaspEntry.COLUMN_NAME_HOSTNAME, hostname.getText().toString());
+		values.put(RaspcontrolContract.RaspEntry.COLUMN_NAME_USERNAME, username.getText().toString());
+		values.put(RaspcontrolContract.RaspEntry.COLUMN_NAME_TOKEN, token.getText().toString());
+		
+		// Insert the new row, returning the primary key value of the new row
+		long newRowId;
+		newRowId = db.insert(
+				RaspcontrolContract.RaspEntry.TABLE_NAME,
+				"null",
+				values);
+		
+		Log.d("DEBUG", "Data well saved");
+		
+		finish();
 	}
 
 }
