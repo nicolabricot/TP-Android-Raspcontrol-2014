@@ -1,7 +1,7 @@
 package info.devenet.android.raspcontrol;
 
-import database.RaspDataBaseHelper;
-import database.RaspcontrolContract;
+import info.devenet.android.raspcontrol.database.RaspDataBaseHelper;
+import info.devenet.android.raspcontrol.database.RaspcontrolContract;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -20,7 +20,7 @@ import android.widget.TextView;
 public class HomeActivity extends Activity {
 
 	public final static String EXTRA_MESSAGE = "info.devenet.android.raspcontrol.MESSAGE";
-	public final static String DELETE_ENTRY = "info.devenet.android.raspcontrol.DELETE_ENTRY";
+	public final static String EXTRA_ENTRY_ID = "info.devenet.android.raspcontrol.ENTRY_ID";
 
 	private RaspDataBaseHelper mDbHelper;
 	private SQLiteDatabase db;
@@ -68,13 +68,15 @@ public class HomeActivity extends Activity {
 				);
 
 		if (c.getCount() > 0) {
+			
+			final HomeActivity mySelf = this;
 
 			c.moveToFirst();
 			do {
 				final long itemId = c
 						.getLong(c
 								.getColumnIndexOrThrow(RaspcontrolContract.RaspEntry._ID));
-				final String itemName = c
+				String itemName = c
 						.getString(c
 								.getColumnIndexOrThrow(RaspcontrolContract.RaspEntry.COLUMN_NAME_ENTRY_NAME));
 				String itemHostname = c
@@ -88,7 +90,9 @@ public class HomeActivity extends Activity {
 					@Override
 					public void onClick(View v) {
 						// TODO Auto-generated method stub
-						Log.d("DEBUG", itemName + " was clicked on");
+						Intent intent = new Intent(mySelf, DisplayEntryActivity.class);
+						intent.putExtra(EXTRA_ENTRY_ID, itemId);
+						startActivity(intent);
 					}
 				});
 
@@ -98,8 +102,6 @@ public class HomeActivity extends Activity {
 				tv = (TextView) l.findViewById(R.id.raspListHostname);
 				tv.setText(itemHostname);
 				
-				final HomeActivity mySelf = this;
-				
 				Button b = (Button) l.findViewById(R.id.raspListButtonDelete);
 				b.setOnClickListener(new Button.OnClickListener() {
 					
@@ -107,7 +109,7 @@ public class HomeActivity extends Activity {
 					public void onClick(View v) {
 						// TODO Auto-generated method stub
 						Intent intent = new Intent(mySelf, DeleteActivity.class);
-						intent.putExtra(DELETE_ENTRY, itemId);
+						intent.putExtra(EXTRA_ENTRY_ID, itemId);
 						startActivity(intent);
 					}
 				});

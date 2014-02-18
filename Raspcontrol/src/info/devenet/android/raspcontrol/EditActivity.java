@@ -1,7 +1,7 @@
 package info.devenet.android.raspcontrol;
 
-import database.RaspDataBaseHelper;
-import database.RaspcontrolContract;
+import info.devenet.android.raspcontrol.database.RaspDataBaseHelper;
+import info.devenet.android.raspcontrol.database.RaspcontrolContract;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.ContentValues;

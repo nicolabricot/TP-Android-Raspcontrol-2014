@@ -8,11 +8,14 @@
         android:minSdkVersion="11"
         android:targetSdkVersion="17" />
 
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    
     <application
         android:allowBackup="true"
+        android:debuggable="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" android:debuggable="true">
+        android:theme="@style/AppTheme" >
         <activity
             android:name="info.devenet.android.raspcontrol.HomeActivity"
             android:label="@string/app_name" >
@@ -38,7 +41,17 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="info.devenet.android.raspcontrol.HomeActivity" />
         </activity>
-        <activity android:name="info.devenet.android.raspcontrol.DeleteActivity" android:parentActivityName="info.devenet.android.raspcontrol.HomeActivity"></activity>
+        <activity
+            android:name="info.devenet.android.raspcontrol.DeleteActivity"
+            android:parentActivityName="info.devenet.android.raspcontrol.HomeActivity" >
+        </activity>
+        <activity
+            android:name="info.devenet.android.raspcontrol.DisplayEntryActivity"
+            android:label="@string/title_activity_display_entry"
+            android:parentActivityName="info.devenet.android.raspcontrol.HomeActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="info.devenet.android.raspcontrol.HomeActivity" />
+        </activity>
     </application>
-
 </manifest>

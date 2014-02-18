@@ -1,4 +1,4 @@
-package database;
+package info.devenet.android.raspcontrol.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

@@ -1,7 +1,7 @@
 package info.devenet.android.raspcontrol;
 
-import database.RaspDataBaseHelper;
-import database.RaspcontrolContract;
+import info.devenet.android.raspcontrol.database.RaspDataBaseHelper;
+import info.devenet.android.raspcontrol.database.RaspcontrolContract;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -15,7 +15,7 @@ public class DeleteActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		
 		Intent intent = getIntent();
-		long itemID = intent.getLongExtra(HomeActivity.DELETE_ENTRY, 0);
+		long itemID = intent.getLongExtra(HomeActivity.EXTRA_ENTRY_ID, 0);
 		
 		if (itemID > 0) {
 			
