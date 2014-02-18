@@ -12,7 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.support.v4.app.NavUtils;
 
 public class EditActivity extends Activity {

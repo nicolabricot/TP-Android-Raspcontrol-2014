@@ -38,6 +38,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="info.devenet.android.raspcontrol.HomeActivity" />
         </activity>
+        <activity android:name="info.devenet.android.raspcontrol.DeleteActivity" android:parentActivityName="info.devenet.android.raspcontrol.HomeActivity"></activity>
     </application>
 
 </manifest>

@@ -22,5 +22,6 @@
     <string name="protocol">Protocol</string>
     <string name="name">Name</string>
     <string name="name_placeholder">Sweety name</string>
+    <string name="button_delete">Delete</string>
 
 </resources>
