@@ -13,7 +13,7 @@
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Rbpi"
+        android:text="General information"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
@@ -64,6 +64,45 @@
 
     <TextView
         android:id="@+id/textViewFirmware"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="loading" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Internal IP"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/textViewInternalIP"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="loading" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="External IP"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/TextViewExternalIP"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="loading" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Uptime"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/textViewUptime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="loading" />

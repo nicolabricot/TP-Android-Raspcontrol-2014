@@ -71,7 +71,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="@string/hostname_placeholder" />
+            android:hint="@string/hostname_placeholder"
+            android:inputType="textUri" />
 
         <TextView
             android:id="@+id/textView2"
@@ -83,7 +84,8 @@
             android:id="@+id/editTextUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10" />
+            android:ems="10"
+            android:inputType="textNoSuggestions" />
 
         <TextView
             android:id="@+id/textView3"

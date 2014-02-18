@@ -112,7 +112,7 @@ public class DisplayEntryActivity extends Activity {
 	 */
 	private void setupActionBar() {
 
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		//getActionBar().setDisplayHomeAsUpEnabled(true);
 
 	}
 
@@ -162,6 +162,7 @@ public class DisplayEntryActivity extends Activity {
 					while ((line = reader.readLine()) != null) {
 						builder.append(line);
 					}
+					Log.d("Getter", builder.toString());
 				} else {
 					Log.e("Getter", "Failed to download file");
 					return null;
@@ -188,6 +189,8 @@ public class DisplayEntryActivity extends Activity {
 				JSONObject json = new JSONObject(result);
 				
 				JSONObject rbpi = json.getJSONObject("rbpi");
+				JSONObject ip = rbpi.getJSONObject("ip");
+				JSONObject uptime = json.getJSONObject("uptime");
 				
 				TextView tv;
 				tv = (TextView) findViewById(R.id.textViewHostname);
@@ -201,6 +204,17 @@ public class DisplayEntryActivity extends Activity {
 				
 				tv = (TextView) findViewById(R.id.textViewFirmware);
 				tv.setText(rbpi.getString("firmware"));
+				
+				tv = (TextView) findViewById(R.id.textViewInternalIP);
+				tv.setText(ip.getString("internal"));
+				
+				tv = (TextView) findViewById(R.id.TextViewExternalIP);
+				tv.setText(ip.getString("external"));
+				
+				tv = (TextView) findViewById(R.id.textViewUptime);
+				tv.setText(uptime.toString());
+				
+				Log.d("DEBUG", "Things done...");
 				
 				
 			} catch (JSONException e) {
