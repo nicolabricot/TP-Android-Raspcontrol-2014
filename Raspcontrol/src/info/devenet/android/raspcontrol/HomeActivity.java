@@ -114,8 +114,7 @@ public class HomeActivity extends Activity {
 					}
 				});
 
-			} while (c.moveToNext());
-
+			} while (c.moveToNext());			
 		}
 
 	}

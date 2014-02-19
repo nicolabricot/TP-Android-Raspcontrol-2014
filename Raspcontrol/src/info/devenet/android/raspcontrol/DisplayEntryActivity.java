@@ -17,6 +17,8 @@ import org.json.JSONObject;
 
 import info.devenet.android.raspcontrol.database.RaspDataBaseHelper;
 import info.devenet.android.raspcontrol.database.RaspcontrolContract;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
@@ -36,34 +38,36 @@ import android.widget.Toast;
 import android.support.v4.app.NavUtils;
 
 public class DisplayEntryActivity extends Activity {
-	
+
 	Context context;
 	TableLayout layout;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_entry);
 		// Show the Up button in the action bar.
 		setupActionBar();
-		
+
 		this.context = getApplicationContext();
 		this.layout = (TableLayout) findViewById(R.id.TableLayoutEntry);
-		
+
 		Intent intent = getIntent();
 		long itemID = intent.getLongExtra(HomeActivity.EXTRA_ENTRY_ID, 0);
-		
+
 		if (itemID > 0) {
-			
-			RaspDataBaseHelper mDbHelper = new RaspDataBaseHelper(getBaseContext());
+
+			RaspDataBaseHelper mDbHelper = new RaspDataBaseHelper(
+					getBaseContext());
 			SQLiteDatabase db = mDbHelper.getReadableDatabase();
-			
+
 			// Define 'where' part of query.
 			String selection = RaspcontrolContract.RaspEntry._ID + " LIKE ?";
 			// Specify arguments in placeholder order.
 			String[] selectionArgs = { String.valueOf(itemID) };
-			
-			// Define a projection that specifies which columns from the database
+
+			// Define a projection that specifies which columns from the
+			// database
 			// you will actually use after this query.
 			String[] projection = { RaspcontrolContract.RaspEntry._ID,
 					RaspcontrolContract.RaspEntry.COLUMN_NAME_ENTRY_NAME,
@@ -83,13 +87,12 @@ public class DisplayEntryActivity extends Activity {
 					null, // don't group the rows
 					null, // don't filter by row groups
 					sortOrder // The sort order
-					);			
-			
+					);
+
 			c.moveToFirst();
-			
-			long itemId = c
-					.getLong(c
-							.getColumnIndexOrThrow(RaspcontrolContract.RaspEntry._ID));
+
+			long itemId = c.getLong(c
+					.getColumnIndexOrThrow(RaspcontrolContract.RaspEntry._ID));
 			String itemName = c
 					.getString(c
 							.getColumnIndexOrThrow(RaspcontrolContract.RaspEntry.COLUMN_NAME_ENTRY_NAME));
@@ -97,14 +100,27 @@ public class DisplayEntryActivity extends Activity {
 					.getString(c
 							.getColumnIndexOrThrow(RaspcontrolContract.RaspEntry.COLUMN_NAME_HOSTNAME));
 			
+			c.close();
+			db.close();
+
 			setTitle(itemName);
-			
-					
-			HttpGetterRaspcontrol get = new HttpGetterRaspcontrol();
-			get.execute("http://ensisa.devenet.info/server/api.php?username=fake&token=d985dfa98e44dda4cbd979affce1cf53&data=all");	
-			
+
+			ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+			NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+			if (networkInfo != null && networkInfo.isConnected()) {
+				// We have the network :)
+				HttpGetterRaspcontrol get = new HttpGetterRaspcontrol();
+				get.execute("http://ensisa.devenet.info/server/api.php?username=fake&token=d985dfa98e44dda4cbd979affce1cf53&data=all");
+
+			} else {
+				// we have a probem huston!
+				Toast.makeText(context,
+						"PROBLEM, HUSTON, WE HAVE A BIG PROBLEM!",
+						Toast.LENGTH_LONG).show();
+			}
+
 		}
-		
+
 	}
 
 	/**
@@ -112,7 +128,7 @@ public class DisplayEntryActivity extends Activity {
 	 */
 	private void setupActionBar() {
 
-		//getActionBar().setDisplayHomeAsUpEnabled(true);
+		// getActionBar().setDisplayHomeAsUpEnabled(true);
 
 	}
 
@@ -172,57 +188,56 @@ public class DisplayEntryActivity extends Activity {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
+
 			return builder.toString();
 		}
-		
+
 		@Override
-	    protected void onPostExecute(String result) {
-			
+		protected void onPostExecute(String result) {
+
 			if (result == null) {
-				Toast.makeText(context, "PROBLEM, HUSTON, WE HAVE A BIG PROBLEM!", Toast.LENGTH_LONG).show();
+				Toast.makeText(context,
+						"PROBLEM, HUSTON, WE HAVE A BIG PROBLEM!",
+						Toast.LENGTH_LONG).show();
 				return;
 			}
-			
-			
+
 			try {
 				JSONObject json = new JSONObject(result);
-				
+
 				JSONObject rbpi = json.getJSONObject("rbpi");
 				JSONObject ip = rbpi.getJSONObject("ip");
-				JSONObject uptime = json.getJSONObject("uptime");
-				
+				String uptime = json.getString("uptime");
+
 				TextView tv;
 				tv = (TextView) findViewById(R.id.textViewHostname);
 				tv.setText(rbpi.getString("hostname"));
-				
+
 				tv = (TextView) findViewById(R.id.textViewDistribution);
 				tv.setText(rbpi.getString("distribution"));
-				
+
 				tv = (TextView) findViewById(R.id.textViewKernel);
 				tv.setText(rbpi.getString("kernel"));
-				
+
 				tv = (TextView) findViewById(R.id.textViewFirmware);
 				tv.setText(rbpi.getString("firmware"));
-				
+
 				tv = (TextView) findViewById(R.id.textViewInternalIP);
 				tv.setText(ip.getString("internal"));
-				
+
 				tv = (TextView) findViewById(R.id.TextViewExternalIP);
 				tv.setText(ip.getString("external"));
-				
+
 				tv = (TextView) findViewById(R.id.textViewUptime);
-				tv.setText(uptime.toString());
-				
+				tv.setText(uptime);
+
 				Log.d("DEBUG", "Things done...");
-				
-				
+
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-	    }
+		}
 	}
-	
-	
+
 }
