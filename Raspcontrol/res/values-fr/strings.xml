@@ -19,10 +19,12 @@
     <string name="name_placeholder">Nom sympa</string>
     <string name="button_delete">Delete</string>
     <string name="title_activity_display_entry">DisplayEntryActivity</string>
-    <string name="hello_world">Hello world!</string>
     <string-array name="protocols">
         <item >http</item>
         <item >https</item>
     </string-array>
+    
+    <string name="action_quit">Quit</string>
+    <string name="action_add">Add</string>
 
 </resources>
