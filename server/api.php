@@ -4,7 +4,8 @@
  * Json API.
  * 
  * USERNAME: fake
- * TOKEN: d985dfa98e44dda4cbd979affce1cf53
+ * TOKEN: token 
+ * // TOKEN: d985dfa98e44dda4cbd979affce1cf53
  * 
  * <HOSTNAME>/api.php?username=<user>&token=<api_token>&data=<data>
  * 
@@ -31,7 +32,8 @@ class Secret {
 
   function __construct() {
     $this->username = 'fake';
-    $this->token = 'd985dfa98e44dda4cbd979affce1cf53';
+    $this->token = 'token';
+    //$this->token = 'd985dfa98e44dda4cbd979affce1cf53';
   }
 
   function verifyToken($username, $token) {

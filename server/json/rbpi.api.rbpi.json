@@ -1,1 +1,1 @@
-{"code":200,"rbpi":{"hostname":"raspberrypi.devenet.eu","distribution":"Raspbian GNU\/Linux 7 (wheezy)","kernel":"Linux 3.10.25+ armv6l","firmware":"#622 PREEMPT Fri Jan 3 18:41:00 GMT 2014","ip":{"internal":"192.168.0.55","external":"82.232.255.28"}}}
+{"code":200,"rbpi":{"hostname":"ensisa.devenet.eu","distribution":"Raspbian GNU\/Linux 7 (wheezy)","kernel":"Linux 3.10.25+ armv6l","firmware":"#622 PREEMPT Fri Jan 3 18:41:00 GMT 2014","ip":{"internal":"192.168.0.55","external":"82.232.255.28"}}}
