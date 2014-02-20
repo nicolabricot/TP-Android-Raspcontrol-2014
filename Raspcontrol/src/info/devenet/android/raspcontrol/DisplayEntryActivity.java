@@ -31,6 +31,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TableLayout;
@@ -41,10 +42,10 @@ import android.support.v4.app.NavUtils;
 public class DisplayEntryActivity extends Activity {
 
 	private Context context;
-	@SuppressWarnings("unused")
-	private TableLayout layout;
 	private long itemID = 0;
-	HttpGetterRaspcontrol http;
+	private HttpGetterRaspcontrol http;
+	private Activity self = this;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,13 +55,10 @@ public class DisplayEntryActivity extends Activity {
 		setupActionBar();
 
 		this.context = getApplicationContext();
-		this.layout = (TableLayout) findViewById(R.id.TableLayoutEntry);
 
 		Intent intent = getIntent();
 		long itemID = intent.getLongExtra(HomeActivity.EXTRA_ENTRY_ID, 0);
 		this.itemID = itemID;
-
-		this.http = new HttpGetterRaspcontrol();
 
 		this.loadDisplay();
 
@@ -125,6 +123,8 @@ public class DisplayEntryActivity extends Activity {
 	}
 
 	private void loadDisplay() {
+		this.http = new HttpGetterRaspcontrol();
+		
 		if (this.itemID > 0) {
 
 			ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -298,31 +298,9 @@ public class DisplayEntryActivity extends Activity {
 							Toast.LENGTH_LONG).show();
 				} else {
 
-					JSONObject rbpi = json.getJSONObject("rbpi");
-					JSONObject ip = rbpi.getJSONObject("ip");
-					String uptime = json.getString("uptime");
-
-					TextView tv;
-					tv = (TextView) findViewById(R.id.textViewHostname);
-					tv.setText(rbpi.getString("hostname"));
-
-					tv = (TextView) findViewById(R.id.textViewDistribution);
-					tv.setText(rbpi.getString("distribution"));
-
-					tv = (TextView) findViewById(R.id.textViewKernel);
-					tv.setText(rbpi.getString("kernel"));
-
-					tv = (TextView) findViewById(R.id.textViewFirmware);
-					tv.setText(rbpi.getString("firmware"));
-
-					tv = (TextView) findViewById(R.id.textViewInternalIP);
-					tv.setText(ip.getString("internal"));
-
-					tv = (TextView) findViewById(R.id.TextViewExternalIP);
-					tv.setText(ip.getString("external"));
-
-					tv = (TextView) findViewById(R.id.textViewUptime);
-					tv.setText(uptime);
+					Raspcontrol rasp = new Raspcontrol(json);
+					rasp.refreshView(self);
+					
 				}
 
 			} catch (JSONException e) {
