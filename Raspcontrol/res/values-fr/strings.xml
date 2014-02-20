@@ -7,24 +7,30 @@
     <string name="button_send">Envoyer</string>
     <string name="edit_message">Entrer un message</string>
     <string name="hostname">Adresse réseau</string>
-    <string name="title_activity_display_message">Mon message</string>
-    <string name="title_activity_edit">EditActivity</string>
-    <string name="username">Nom d\'utilisateur</string>
+    <string name="title_activity_edit">Raspcontrol</string>
+    <string name="username">Nom d’utilisateur</string>
     <string name="button_save">Sauvegarder</string>
     <string name="button_cancel">Annuler</string>
-    <string name="hostname_placeholder">example.com ou 127.0.0.1</string>
+    <string name="hostname_placeholder">exemple.com/statuts</string>
+    <string name="hostname_placeholder_legend">nom d’hôte ou IP</string>
     <string name="passwordToken">Token</string>
     <string name="protocol">Protocole</string>
     <string name="name">Nom</string>
-    <string name="name_placeholder">Nom sympa</string>
-    <string name="button_delete">Delete</string>
-    <string name="title_activity_display_entry">DisplayEntryActivity</string>
+    <string name="name_placeholder">Petit nom sympa</string>
+    <string name="button_delete">Supprimer</string>
+    <string name="title_activity_display_entry">Raspcontrol</string>
+
     <string-array name="protocols">
-        <item >http</item>
-        <item >https</item>
+        <item>http</item>
+        <item>https</item>
     </string-array>
+
+    <string name="action_quit">Quitter</string>
+    <string name="action_add">Ajouter</string>
+    <string name="action_delete">Supprimer</string>
     
-    <string name="action_quit">Quit</string>
-    <string name="action_add">Add</string>
+    <string name="loading">chargement</string>
+    <string name="title_add_entry">Nouvelle entrée</string>
+    <string name="title_edit_entry">Modifier une entrée</string>
 
 </resources>

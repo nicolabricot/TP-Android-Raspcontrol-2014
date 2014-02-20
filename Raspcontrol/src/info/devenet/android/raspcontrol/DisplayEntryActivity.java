@@ -15,8 +15,9 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import info.devenet.android.raspcontrol.database.RaspDataBaseHelper;
-import info.devenet.android.raspcontrol.database.RaspcontrolContract;
+import info.devenet.android.raspcontrol.core.Raspcontrol;
+import info.devenet.android.raspcontrol.database.DatabaseHelper;
+import info.devenet.android.raspcontrol.database.DatabaseContract;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -26,12 +27,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.text.Layout;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,13 +36,15 @@ import android.support.v4.app.NavUtils;
 
 public class DisplayEntryActivity extends Activity {
 
-	Context context;
-	TableLayout layout;
+	private Context context;
+	@SuppressWarnings("unused")
+	private TableLayout layout;
+	private long itemID = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_display_entry);
+
 		// Show the Up button in the action bar.
 		setupActionBar();
 
@@ -54,72 +53,92 @@ public class DisplayEntryActivity extends Activity {
 
 		Intent intent = getIntent();
 		long itemID = intent.getLongExtra(HomeActivity.EXTRA_ENTRY_ID, 0);
+		this.itemID = itemID;
 
 		if (itemID > 0) {
-
-			RaspDataBaseHelper mDbHelper = new RaspDataBaseHelper(
-					getBaseContext());
-			SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
-			// Define 'where' part of query.
-			String selection = RaspcontrolContract.RaspEntry._ID + " LIKE ?";
-			// Specify arguments in placeholder order.
-			String[] selectionArgs = { String.valueOf(itemID) };
-
-			// Define a projection that specifies which columns from the
-			// database
-			// you will actually use after this query.
-			String[] projection = { RaspcontrolContract.RaspEntry._ID,
-					RaspcontrolContract.RaspEntry.COLUMN_NAME_ENTRY_NAME,
-					RaspcontrolContract.RaspEntry.COLUMN_NAME_HOSTNAME };
-
-			// How you want the results sorted in the resulting Cursor
-			String sortOrder = RaspcontrolContract.RaspEntry.COLUMN_NAME_ENTRY_NAME
-					+ " ASC";
-
-			Cursor c = db.query(RaspcontrolContract.RaspEntry.TABLE_NAME, // The
-																			// table
-																			// to
-																			// query
-					projection, // The columns to return
-					selection, // The columns for the WHERE clause
-					selectionArgs, // The values for the WHERE clause
-					null, // don't group the rows
-					null, // don't filter by row groups
-					sortOrder // The sort order
-					);
-
-			c.moveToFirst();
-
-			long itemId = c.getLong(c
-					.getColumnIndexOrThrow(RaspcontrolContract.RaspEntry._ID));
-			String itemName = c
-					.getString(c
-							.getColumnIndexOrThrow(RaspcontrolContract.RaspEntry.COLUMN_NAME_ENTRY_NAME));
-			String itemHostname = c
-					.getString(c
-							.getColumnIndexOrThrow(RaspcontrolContract.RaspEntry.COLUMN_NAME_HOSTNAME));
-			
-			c.close();
-			db.close();
-
-			setTitle(itemName);
 
 			ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 			NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 			if (networkInfo != null && networkInfo.isConnected()) {
 				// We have the network :)
-				HttpGetterRaspcontrol get = new HttpGetterRaspcontrol();
-				get.execute("http://ensisa.devenet.info/server/api.php?username=fake&token=d985dfa98e44dda4cbd979affce1cf53&data=all");
+
+				DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
+				SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+				// Define 'where' part of query.
+				String selection = DatabaseContract.Entry._ID + " LIKE ?";
+				// Specify arguments in placeholder order.
+				String[] selectionArgs = { String.valueOf(itemID) };
+
+				// Define a projection that specifies which columns from the
+				// database
+				// you will actually use after this query.
+				String[] projection = { DatabaseContract.Entry._ID,
+						DatabaseContract.Entry.COLUMN_NAME_ENTRY_NAME,
+						DatabaseContract.Entry.COLUMN_NAME_HOSTNAME,
+						DatabaseContract.Entry.COLUMN_NAME_PROTOCOL,
+						DatabaseContract.Entry.COLUMN_NAME_USERNAME,
+						DatabaseContract.Entry.COLUMN_NAME_TOKEN };
+
+				// How you want the results sorted in the resulting Cursor
+				String sortOrder = DatabaseContract.Entry.COLUMN_NAME_ENTRY_NAME
+						+ " ASC";
+
+				Cursor c = db.query(DatabaseContract.Entry.TABLE_NAME,
+						projection, // The columns to return
+						selection, // The columns for the WHERE clause
+						selectionArgs, // The values for the WHERE clause
+						null, // don't group the rows
+						null, // don't filter by row groups
+						sortOrder // The sort order
+						);
+
+				c.moveToFirst();
+
+				@SuppressWarnings("unused")
+				long itemId = c.getLong(c
+						.getColumnIndexOrThrow(DatabaseContract.Entry._ID));
+				String itemName = c
+						.getString(c
+								.getColumnIndexOrThrow(DatabaseContract.Entry.COLUMN_NAME_ENTRY_NAME));
+				String itemHostname = c
+						.getString(c
+								.getColumnIndexOrThrow(DatabaseContract.Entry.COLUMN_NAME_HOSTNAME));
+				String itemProtocol = c
+						.getString(c
+								.getColumnIndexOrThrow(DatabaseContract.Entry.COLUMN_NAME_PROTOCOL));
+				String itemUsername = c
+						.getString(c
+								.getColumnIndexOrThrow(DatabaseContract.Entry.COLUMN_NAME_USERNAME));
+				String itemToken = c
+						.getString(c
+								.getColumnIndexOrThrow(DatabaseContract.Entry.COLUMN_NAME_TOKEN));
+
+				c.close();
+				db.close();
+
+				setTitle(itemName);
+
+				String url = itemProtocol + "://" + itemHostname + "/"
+						+ Raspcontrol.API_FILE + Raspcontrol.API_FIRST_ARGUMENT
+						+ Raspcontrol.API_USERNAME + Raspcontrol.API_EQUAL
+						+ itemUsername + Raspcontrol.API_OTHER_ARGUMENT
+						+ Raspcontrol.API_TOKEN + Raspcontrol.API_EQUAL
+						+ itemToken + Raspcontrol.API_OTHER_ARGUMENT
+						+ Raspcontrol.API_DATA + Raspcontrol.API_EQUAL
+						+ Raspcontrol.API_DATA_ALL;
+
+				new HttpGetterRaspcontrol().execute(url);
 
 			} else {
+				finish();
 				// we have a probem huston!
-				Toast.makeText(context,
-						"PROBLEM, HUSTON, WE HAVE A BIG PROBLEM!",
+				Toast.makeText(context, "No network connectivity detected!",
 						Toast.LENGTH_LONG).show();
 			}
 
 		}
+		setContentView(R.layout.activity_display_entry);
 
 	}
 
@@ -141,6 +160,7 @@ public class DisplayEntryActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		Intent intent;
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			// This ID represents the Home or Up button. In the case of this
@@ -151,6 +171,17 @@ public class DisplayEntryActivity extends Activity {
 			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
 			//
 			NavUtils.navigateUpFromSameTask(this);
+			return true;
+		case R.id.action_delete:
+			finish();
+			intent = new Intent(this, DeleteActivity.class);
+			intent.putExtra(HomeActivity.EXTRA_ENTRY_ID, this.itemID);
+			startActivity(intent);
+			return true;
+		case R.id.action_edit:
+			intent = new Intent(this, EditActivity.class);
+			intent.putExtra(HomeActivity.EXTRA_ENTRY_ID, this.itemID);
+			startActivity(intent);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
@@ -178,15 +209,16 @@ public class DisplayEntryActivity extends Activity {
 					while ((line = reader.readLine()) != null) {
 						builder.append(line);
 					}
-					Log.d("Getter", builder.toString());
 				} else {
-					Log.e("Getter", "Failed to download file");
-					return null;
+					return "Error " + statusLine.getStatusCode() + ": "
+							+ statusLine.getReasonPhrase();
 				}
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
+				return e.getLocalizedMessage();
 			} catch (IOException e) {
 				e.printStackTrace();
+				return e.getLocalizedMessage();
 			}
 
 			return builder.toString();
@@ -195,47 +227,51 @@ public class DisplayEntryActivity extends Activity {
 		@Override
 		protected void onPostExecute(String result) {
 
-			if (result == null) {
-				Toast.makeText(context,
-						"PROBLEM, HUSTON, WE HAVE A BIG PROBLEM!",
-						Toast.LENGTH_LONG).show();
-				return;
-			}
-
 			try {
 				JSONObject json = new JSONObject(result);
 
-				JSONObject rbpi = json.getJSONObject("rbpi");
-				JSONObject ip = rbpi.getJSONObject("ip");
-				String uptime = json.getString("uptime");
+				if (!json.has("code")) {
+					Toast.makeText(context, "Invalid response from API",
+							Toast.LENGTH_LONG).show();
+				}
 
-				TextView tv;
-				tv = (TextView) findViewById(R.id.textViewHostname);
-				tv.setText(rbpi.getString("hostname"));
+				if (json.getInt("code") != 200) {
+					Toast.makeText(context, json.getString("error"),
+							Toast.LENGTH_LONG).show();
+				} else {
 
-				tv = (TextView) findViewById(R.id.textViewDistribution);
-				tv.setText(rbpi.getString("distribution"));
+					JSONObject rbpi = json.getJSONObject("rbpi");
+					JSONObject ip = rbpi.getJSONObject("ip");
+					String uptime = json.getString("uptime");
 
-				tv = (TextView) findViewById(R.id.textViewKernel);
-				tv.setText(rbpi.getString("kernel"));
+					TextView tv;
+					tv = (TextView) findViewById(R.id.textViewHostname);
+					tv.setText(rbpi.getString("hostname"));
 
-				tv = (TextView) findViewById(R.id.textViewFirmware);
-				tv.setText(rbpi.getString("firmware"));
+					tv = (TextView) findViewById(R.id.textViewDistribution);
+					tv.setText(rbpi.getString("distribution"));
 
-				tv = (TextView) findViewById(R.id.textViewInternalIP);
-				tv.setText(ip.getString("internal"));
+					tv = (TextView) findViewById(R.id.textViewKernel);
+					tv.setText(rbpi.getString("kernel"));
 
-				tv = (TextView) findViewById(R.id.TextViewExternalIP);
-				tv.setText(ip.getString("external"));
+					tv = (TextView) findViewById(R.id.textViewFirmware);
+					tv.setText(rbpi.getString("firmware"));
 
-				tv = (TextView) findViewById(R.id.textViewUptime);
-				tv.setText(uptime);
+					tv = (TextView) findViewById(R.id.textViewInternalIP);
+					tv.setText(ip.getString("internal"));
 
-				Log.d("DEBUG", "Things done...");
+					tv = (TextView) findViewById(R.id.TextViewExternalIP);
+					tv.setText(ip.getString("external"));
+
+					tv = (TextView) findViewById(R.id.textViewUptime);
+					tv.setText(uptime);
+				}
 
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				//finish();
+				Toast.makeText(context, result, Toast.LENGTH_LONG).show();
 			}
 		}
 	}

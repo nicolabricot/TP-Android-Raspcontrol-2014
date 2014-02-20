@@ -1,8 +1,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    
-    
-    
-    <item android:id="@+id/action_add" android:enabled="true" android:visible="true" android:title="Add"></item><item android:id="@+id/action_settings" android:showAsAction="collapseActionView" android:title="@string/action_settings" android:visible="true" android:enabled="true" /><item android:enabled="true" android:id="@+id/action_quit" android:visible="true" android:title="Quit"></item>
+    <item
+        android:id="@+id/action_add"
+        android:enabled="true"
+        android:title="@string/action_add"
+        android:visible="true">
+    </item>
+    <item
+        android:id="@+id/action_settings"
+        android:enabled="false"
+        android:showAsAction="collapseActionView"
+        android:title="@string/action_settings"
+        android:visible="false"/>
+    <item
+        android:id="@+id/action_quit"
+        android:enabled="true"
+        android:title="@string/action_quit"
+        android:visible="true">
+    </item>
 
 </menu>

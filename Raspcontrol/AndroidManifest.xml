@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="info.devenet.android.raspcontrol"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="1.0" android:installLocation="auto">
 
     <uses-sdk
         android:minSdkVersion="10"
@@ -25,14 +25,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name="info.devenet.android.raspcontrol.DisplayMessageActivity"
-            android:label="@string/title_activity_display_message"
-            android:parentActivityName="info.devenet.android.raspcontrol.HomeActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="info.devenet.android.raspcontrol.HomeActivity" />
         </activity>
         <activity
             android:name="info.devenet.android.raspcontrol.EditActivity"

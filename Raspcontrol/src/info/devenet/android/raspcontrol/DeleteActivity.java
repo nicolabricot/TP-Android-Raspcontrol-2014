@@ -31,7 +31,6 @@ public class DeleteActivity extends Activity {
 			db.delete(DatabaseContract.Entry.TABLE_NAME, selection, selectionArgs);
 			
 		}
-		
 		finish();
 	}
 

@@ -13,8 +13,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -41,6 +40,8 @@ public class HomeActivity extends Activity {
 	}
 
 	protected void refreshList() {
+		
+		list.removeAllViews();
 
 		LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -64,8 +65,6 @@ public class HomeActivity extends Activity {
 				);
 
 		if (c.getCount() > 0) {
-			
-			list.removeAllViews();
 			
 			final HomeActivity mySelf = this;
 
@@ -100,8 +99,8 @@ public class HomeActivity extends Activity {
 				tv = (TextView) l.findViewById(R.id.raspListHostname);
 				tv.setText(itemHostname);
 				
-				Button b = (Button) l.findViewById(R.id.raspListButtonDelete);
-				b.setOnClickListener(new Button.OnClickListener() {
+				ImageButton b = (ImageButton) l.findViewById(R.id.raspListButtonDelete);
+				b.setOnClickListener(new ImageButton.OnClickListener() {
 					
 					@Override
 					public void onClick(View v) {
@@ -113,6 +112,11 @@ public class HomeActivity extends Activity {
 				});
 
 			} while (c.moveToNext());			
+		}
+		else {
+			TextView tv = new TextView(getBaseContext());
+			tv.setText("No host found...");
+			list.addView(tv);
 		}
 
 	}

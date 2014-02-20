@@ -32,7 +32,7 @@
             android:id="@+id/textViewHostname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="loading" />
+            android:text="@string/loading" />
 
         <TextView
             android:id="@+id/textView3"
@@ -45,7 +45,7 @@
             android:id="@+id/textViewDistribution"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="loading" />
+            android:text="@string/loading" />
 
         <TextView
             android:id="@+id/textView4"
@@ -58,7 +58,7 @@
             android:id="@+id/textViewKernel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="loading" />
+            android:text="@string/loading" />
 
         <TextView
             android:id="@+id/textView5"
@@ -71,7 +71,7 @@
             android:id="@+id/textViewFirmware"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="loading" />
+            android:text="@string/loading" />
 
         <LinearLayout
             android:id="@+id/IPLayout"
@@ -96,7 +96,7 @@
                     android:id="@+id/textViewInternalIP"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="loading" />
+                    android:text="@string/loading" />
             </LinearLayout>
 
             <LinearLayout
@@ -118,7 +118,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
-                    android:text="loading" />
+                    android:text="@string/loading" />
             </LinearLayout>
         </LinearLayout>
 
@@ -133,7 +133,7 @@
             android:id="@+id/textViewUptime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="loading" />
+            android:text="@string/loading" />
     </TableLayout>
 
 </ScrollView>
