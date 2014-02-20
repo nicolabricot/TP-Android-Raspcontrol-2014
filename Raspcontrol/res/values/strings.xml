@@ -9,7 +9,6 @@
     <string name="button_add">Add</string>
     <string name="button_save">Save</string>
     <string name="button_cancel">Cancel</string>
-    <string name="title_activity_edit">Raspcontrol</string>
     <string name="hostname">Hostname</string>
     <string name="username">Username</string>
     <string name="hostname_placeholder">example.com/status</string>
@@ -30,8 +29,11 @@
     <string name="action_delete">Delete</string>
     <string name="action_edit">Edit</string>
     <string name="loading">loading</string>
+    <string name="action_refresh">Refresh</string>
     
     <string name="title_add_entry">New entry</string>
     <string name="title_edit_entry">Edit entry</string>
+    
+    <string name="error_no_connectivity">No network connectivity!</string>
 
 </resources>

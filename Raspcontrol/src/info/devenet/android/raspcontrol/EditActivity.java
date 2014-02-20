@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,24 +18,97 @@ import android.widget.Toast;
 import android.support.v4.app.NavUtils;
 
 public class EditActivity extends Activity {
-	
+
 	private DatabaseHelper mDbHelper;
 	private SQLiteDatabase db;
+
+	private long itemID;
+
+	private EditText nameView;
+	private Spinner protocolView;
+	private EditText hostnameView;
+	private EditText usernameView;
+	private EditText tokenView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_edit_entry);
-		
+
+		this.nameView = (EditText) this.findViewById(R.id.editTextName);
+		this.protocolView = (Spinner) this.findViewById(R.id.spinnerProtocol);
+		this.hostnameView = (EditText) this.findViewById(R.id.editTextHostname);
+		this.usernameView = (EditText) this.findViewById(R.id.editTextUsername);
+		this.tokenView = (EditText) this.findViewById(R.id.editTextToken);
+
 		this.mDbHelper = new DatabaseHelper(getBaseContext());
-		
+
 		Intent intent = getIntent();
-		long itemID = intent.getLongExtra(HomeActivity.EXTRA_ENTRY_ID, 0);
-		
-		if (itemID > 0) {
+		this.itemID = intent.getLongExtra(HomeActivity.EXTRA_ENTRY_ID, 0);
+
+		if (this.itemID > 0) {
 			setTitle(R.string.title_edit_entry);
-		}
-		else {
+
+			this.db = mDbHelper.getReadableDatabase();
+
+			// Define 'where' part of query.
+			String selection = DatabaseContract.Entry._ID + " LIKE ?";
+			// Specify arguments in placeholder order.
+			String[] selectionArgs = { String.valueOf(itemID) };
+
+			// Define a projection that specifies which columns from the
+			// database
+			// you will actually use after this query.
+			String[] projection = { DatabaseContract.Entry._ID,
+					DatabaseContract.Entry.COLUMN_NAME_ENTRY_NAME,
+					DatabaseContract.Entry.COLUMN_NAME_HOSTNAME,
+					DatabaseContract.Entry.COLUMN_NAME_PROTOCOL,
+					DatabaseContract.Entry.COLUMN_NAME_USERNAME,
+					DatabaseContract.Entry.COLUMN_NAME_TOKEN };
+
+			// How you want the results sorted in the resulting Cursor
+			String sortOrder = DatabaseContract.Entry.COLUMN_NAME_ENTRY_NAME
+					+ " ASC";
+
+			Cursor c = db.query(DatabaseContract.Entry.TABLE_NAME, projection, // The
+																				// columns
+																				// to
+																				// return
+					selection, // The columns for the WHERE clause
+					selectionArgs, // The values for the WHERE clause
+					null, // don't group the rows
+					null, // don't filter by row groups
+					sortOrder // The sort order
+					);
+
+			c.moveToFirst();
+
+			String itemName = c
+					.getString(c
+							.getColumnIndexOrThrow(DatabaseContract.Entry.COLUMN_NAME_ENTRY_NAME));
+			String itemHostname = c
+					.getString(c
+							.getColumnIndexOrThrow(DatabaseContract.Entry.COLUMN_NAME_HOSTNAME));
+			String itemProtocol = c
+					.getString(c
+							.getColumnIndexOrThrow(DatabaseContract.Entry.COLUMN_NAME_PROTOCOL));
+			String itemUsername = c
+					.getString(c
+							.getColumnIndexOrThrow(DatabaseContract.Entry.COLUMN_NAME_USERNAME));
+			String itemToken = c
+					.getString(c
+							.getColumnIndexOrThrow(DatabaseContract.Entry.COLUMN_NAME_TOKEN));
+
+			c.close();
+			this.db.close();
+
+			this.nameView.setText(itemName);
+			this.hostnameView.setText(itemHostname);
+			this.protocolView.setSelection(itemProtocol.equals("http") ? 0 : 1);
+			this.usernameView.setText(itemUsername);
+			this.tokenView.setText(itemToken);
+
+		} else {
 			setTitle(R.string.title_add_entry);
 		}
 
@@ -82,42 +157,34 @@ public class EditActivity extends Activity {
 
 		// Create a new map of values, where column names are the keys
 		ContentValues values = new ContentValues();
-		EditText nameView = (EditText) this.findViewById(R.id.editTextName);
-		String name = nameView.getText().toString();
+		String name = this.nameView.getText().toString();
 		if (name.isEmpty()) {
-			Toast.makeText(getBaseContext(), "Name field is blank",
+			Toast.makeText(getBaseContext(), "Name field is required",
 					Toast.LENGTH_SHORT).show();
 			return;
 		}
 
-		Spinner protocolView = (Spinner) this
-				.findViewById(R.id.spinnerProtocol);
-		String protocol = protocolView.getSelectedItem().toString();
+		String protocol = this.protocolView.getSelectedItem().toString();
 
-		EditText hostnameView = (EditText) this
-				.findViewById(R.id.editTextHostname);
-		String hostname = hostnameView.getText().toString();
+		String hostname = this.hostnameView.getText().toString();
 		if (hostname.isEmpty()) {
-			Toast.makeText(getBaseContext(), "Hostname field is blank",
+			Toast.makeText(getBaseContext(), "Hostname field is required",
 					Toast.LENGTH_SHORT).show();
 			return;
 		}
 		if (hostname.endsWith("/")) {
 			hostname = hostname.substring(0, hostname.length() - 1);
-			hostnameView.setText(hostname);
+			this.hostnameView.setText(hostname);
 		}
 
-		EditText usernameView = (EditText) this
-				.findViewById(R.id.editTextUsername);
-		String username = usernameView.getText().toString();
+		String username = this.usernameView.getText().toString();
 		if (username.isEmpty()) {
-			Toast.makeText(getBaseContext(), "Username field is blank",
+			Toast.makeText(getBaseContext(), "Username field is required",
 					Toast.LENGTH_SHORT).show();
 			return;
 		}
 
-		EditText tokenView = (EditText) this.findViewById(R.id.editTextToken);
-		String token = tokenView.getText().toString();
+		String token = this.tokenView.getText().toString();
 		if (token.isEmpty()) {
 			Toast.makeText(getBaseContext(), "Token field is blank",
 					Toast.LENGTH_SHORT).show();
@@ -130,12 +197,24 @@ public class EditActivity extends Activity {
 		values.put(DatabaseContract.Entry.COLUMN_NAME_USERNAME, username);
 		values.put(DatabaseContract.Entry.COLUMN_NAME_TOKEN, token);
 
-		// Insert the new row, returning the primary key value of the new row
-		long newRowId;
-		newRowId = db.insert(DatabaseContract.Entry.TABLE_NAME, "null", values);
+		if (this.itemID == 0) {
+			// Insert the new row, returning the primary key value of the new
+			// row
+			long newRowId;
+			newRowId = db.insert(DatabaseContract.Entry.TABLE_NAME, "null",
+					values);
+		} else {
+			// Which row to update, based on the ID
+			String selection = DatabaseContract.Entry._ID + " LIKE ?";
+			String[] selectionArgs = { String.valueOf(this.itemID) };
+
+			db.update(DatabaseContract.Entry.TABLE_NAME,
+					values, selection, selectionArgs);
+		}
 		finish();
+
 	}
-	
+
 	/** Called when the user clicks the Cancel button */
 	public void cancelEditEntry(View view) {
 		finish();

@@ -4,7 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
+import java.util.Timer;
+import java.util.TimerTask;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -14,7 +15,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import info.devenet.android.raspcontrol.core.Raspcontrol;
 import info.devenet.android.raspcontrol.database.DatabaseHelper;
 import info.devenet.android.raspcontrol.database.DatabaseContract;
@@ -22,6 +22,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -40,6 +41,7 @@ public class DisplayEntryActivity extends Activity {
 	@SuppressWarnings("unused")
 	private TableLayout layout;
 	private long itemID = 0;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +56,63 @@ public class DisplayEntryActivity extends Activity {
 		Intent intent = getIntent();
 		long itemID = intent.getLongExtra(HomeActivity.EXTRA_ENTRY_ID, 0);
 		this.itemID = itemID;
+		
+		this.loadDisplay();
 
-		if (itemID > 0) {
+		setContentView(R.layout.activity_display_entry);
+
+	}
+
+	/**
+	 * Set up the {@link android.app.ActionBar}.
+	 */
+	private void setupActionBar() {
+
+		// getActionBar().setDisplayHomeAsUpEnabled(true);
+
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.display_entry, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		Intent intent;
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			// This ID represents the Home or Up button. In the case of this
+			// activity, the Up button is shown. Use NavUtils to allow users
+			// to navigate up one level in the application structure. For
+			// more details, see the Navigation pattern on Android Design:
+			//
+			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
+			//
+			NavUtils.navigateUpFromSameTask(this);
+			return true;
+		case R.id.action_delete:
+			finish();
+			intent = new Intent(this, DeleteActivity.class);
+			intent.putExtra(HomeActivity.EXTRA_ENTRY_ID, this.itemID);
+			startActivity(intent);
+			return true;
+		case R.id.action_edit:
+			intent = new Intent(this, EditActivity.class);
+			intent.putExtra(HomeActivity.EXTRA_ENTRY_ID, this.itemID);
+			startActivity(intent);
+			return true;
+		case R.id.action_refresh:
+			this.loadDisplay();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	private void loadDisplay() {
+		if (this.itemID > 0) {
 
 			ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 			NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -127,67 +184,36 @@ public class DisplayEntryActivity extends Activity {
 						+ itemToken + Raspcontrol.API_OTHER_ARGUMENT
 						+ Raspcontrol.API_DATA + Raspcontrol.API_EQUAL
 						+ Raspcontrol.API_DATA_ALL;
-
+				
 				new HttpGetterRaspcontrol().execute(url);
 
 			} else {
-				finish();
 				// we have a probem huston!
-				Toast.makeText(context, "No network connectivity detected!",
+				Toast.makeText(context, R.string.error_no_connectivity,
 						Toast.LENGTH_LONG).show();
 			}
 
 		}
-		setContentView(R.layout.activity_display_entry);
-
-	}
-
-	/**
-	 * Set up the {@link android.app.ActionBar}.
-	 */
-	private void setupActionBar() {
-
-		// getActionBar().setDisplayHomeAsUpEnabled(true);
-
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.display_entry, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		Intent intent;
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			// This ID represents the Home or Up button. In the case of this
-			// activity, the Up button is shown. Use NavUtils to allow users
-			// to navigate up one level in the application structure. For
-			// more details, see the Navigation pattern on Android Design:
-			//
-			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
-			//
-			NavUtils.navigateUpFromSameTask(this);
-			return true;
-		case R.id.action_delete:
-			finish();
-			intent = new Intent(this, DeleteActivity.class);
-			intent.putExtra(HomeActivity.EXTRA_ENTRY_ID, this.itemID);
-			startActivity(intent);
-			return true;
-		case R.id.action_edit:
-			intent = new Intent(this, EditActivity.class);
-			intent.putExtra(HomeActivity.EXTRA_ENTRY_ID, this.itemID);
-			startActivity(intent);
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
 	}
 
 	private class HttpGetterRaspcontrol extends AsyncTask<String, Void, String> {
+		
+		private Timer timer;
+		private Toast loadingToast;
+		
+		@SuppressLint("ShowToast")
+		@Override
+		protected void onPreExecute() {
+			this.loadingToast = Toast.makeText(getBaseContext(), R.string.loading, Toast.LENGTH_SHORT);
+			this.timer = new Timer();
+			this.timer.scheduleAtFixedRate(new TimerTask() {
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					publishProgress();
+				}
+			}, 0, 1000);
+		}
 
 		@Override
 		protected String doInBackground(String... urls) {
@@ -195,7 +221,7 @@ public class DisplayEntryActivity extends Activity {
 			StringBuilder builder = new StringBuilder();
 			HttpClient client = new DefaultHttpClient();
 			HttpGet httpGet = new HttpGet(urls[0]);
-
+			
 			try {
 				HttpResponse response = client.execute(httpGet);
 				StatusLine statusLine = response.getStatusLine();
@@ -223,9 +249,19 @@ public class DisplayEntryActivity extends Activity {
 
 			return builder.toString();
 		}
+		
+		@Override
+		protected void onProgressUpdate(Void... progress) {
+	         loadingToast.show();
+	     }
+		
 
 		@Override
 		protected void onPostExecute(String result) {
+			
+			this.timer.cancel();
+			this.timer.purge();
+			loadingToast.cancel();
 
 			try {
 				JSONObject json = new JSONObject(result);
@@ -270,7 +306,7 @@ public class DisplayEntryActivity extends Activity {
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				//finish();
+				// finish();
 				Toast.makeText(context, result, Toast.LENGTH_LONG).show();
 			}
 		}
