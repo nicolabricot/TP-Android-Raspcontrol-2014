@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Timer;
 import java.util.TimerTask;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -15,12 +16,14 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import info.devenet.android.raspcontrol.core.Raspcontrol;
 import info.devenet.android.raspcontrol.database.DatabaseHelper;
 import info.devenet.android.raspcontrol.database.DatabaseContract;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -41,7 +44,7 @@ public class DisplayEntryActivity extends Activity {
 	@SuppressWarnings("unused")
 	private TableLayout layout;
 	private long itemID = 0;
-	
+	HttpGetterRaspcontrol http;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +59,9 @@ public class DisplayEntryActivity extends Activity {
 		Intent intent = getIntent();
 		long itemID = intent.getLongExtra(HomeActivity.EXTRA_ENTRY_ID, 0);
 		this.itemID = itemID;
-		
+
+		this.http = new HttpGetterRaspcontrol();
+
 		this.loadDisplay();
 
 		setContentView(R.layout.activity_display_entry);
@@ -66,10 +71,12 @@ public class DisplayEntryActivity extends Activity {
 	/**
 	 * Set up the {@link android.app.ActionBar}.
 	 */
+	@SuppressLint("NewApi")
 	private void setupActionBar() {
-
-		// getActionBar().setDisplayHomeAsUpEnabled(true);
-
+		// Make sure we're running on Honeycomb or higher to use ActionBar APIs
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			getActionBar().setDisplayHomeAsUpEnabled(true);
+		}
 	}
 
 	@Override
@@ -77,6 +84,12 @@ public class DisplayEntryActivity extends Activity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.display_entry, menu);
 		return true;
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		http.cancel(true);
 	}
 
 	@Override
@@ -184,8 +197,8 @@ public class DisplayEntryActivity extends Activity {
 						+ itemToken + Raspcontrol.API_OTHER_ARGUMENT
 						+ Raspcontrol.API_DATA + Raspcontrol.API_EQUAL
 						+ Raspcontrol.API_DATA_ALL;
-				
-				new HttpGetterRaspcontrol().execute(url);
+
+				http.execute(url);
 
 			} else {
 				// we have a probem huston!
@@ -197,14 +210,15 @@ public class DisplayEntryActivity extends Activity {
 	}
 
 	private class HttpGetterRaspcontrol extends AsyncTask<String, Void, String> {
-		
+
 		private Timer timer;
 		private Toast loadingToast;
-		
+
 		@SuppressLint("ShowToast")
 		@Override
 		protected void onPreExecute() {
-			this.loadingToast = Toast.makeText(getBaseContext(), R.string.loading, Toast.LENGTH_SHORT);
+			this.loadingToast = Toast.makeText(getBaseContext(),
+					R.string.loading, Toast.LENGTH_SHORT);
 			this.timer = new Timer();
 			this.timer.scheduleAtFixedRate(new TimerTask() {
 				@Override
@@ -212,7 +226,16 @@ public class DisplayEntryActivity extends Activity {
 					// TODO Auto-generated method stub
 					publishProgress();
 				}
-			}, 0, 1000);
+			}, 0, 2000);
+		}
+
+		@Override
+		protected void onCancelled() {
+			if (this.timer != null && this.loadingToast != null) {
+				this.timer.cancel();
+				this.timer.purge();
+				this.loadingToast.cancel();
+			}
 		}
 
 		@Override
@@ -221,7 +244,7 @@ public class DisplayEntryActivity extends Activity {
 			StringBuilder builder = new StringBuilder();
 			HttpClient client = new DefaultHttpClient();
 			HttpGet httpGet = new HttpGet(urls[0]);
-			
+
 			try {
 				HttpResponse response = client.execute(httpGet);
 				StatusLine statusLine = response.getStatusLine();
@@ -249,16 +272,15 @@ public class DisplayEntryActivity extends Activity {
 
 			return builder.toString();
 		}
-		
+
 		@Override
 		protected void onProgressUpdate(Void... progress) {
-	         loadingToast.show();
-	     }
-		
+			loadingToast.show();
+		}
 
 		@Override
 		protected void onPostExecute(String result) {
-			
+
 			this.timer.cancel();
 			this.timer.purge();
 			loadingToast.cancel();

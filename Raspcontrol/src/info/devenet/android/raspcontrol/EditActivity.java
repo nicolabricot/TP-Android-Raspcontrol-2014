@@ -2,7 +2,10 @@ package info.devenet.android.raspcontrol;
 
 import info.devenet.android.raspcontrol.database.DatabaseHelper;
 import info.devenet.android.raspcontrol.database.DatabaseContract;
+import android.os.Build;
 import android.os.Bundle;
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -119,10 +122,12 @@ public class EditActivity extends Activity {
 	/**
 	 * Set up the {@link android.app.ActionBar}.
 	 */
+	@SuppressLint("NewApi")
 	private void setupActionBar() {
-
-		// getActionBar().setDisplayHomeAsUpEnabled(true);
-
+		// Make sure we're running on Honeycomb or higher to use ActionBar APIs
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			getActionBar().setDisplayHomeAsUpEnabled(true);
+	    }
 	}
 
 	@Override
