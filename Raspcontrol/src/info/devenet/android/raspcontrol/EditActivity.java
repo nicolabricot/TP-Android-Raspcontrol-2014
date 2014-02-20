@@ -1,7 +1,7 @@
 package info.devenet.android.raspcontrol;
 
-import info.devenet.android.raspcontrol.database.RaspDataBaseHelper;
-import info.devenet.android.raspcontrol.database.RaspcontrolContract;
+import info.devenet.android.raspcontrol.database.DatabaseHelper;
+import info.devenet.android.raspcontrol.database.DatabaseContract;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.ContentValues;
@@ -20,6 +20,7 @@ public class EditActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_edit);
+		
 		// Show the Up button in the action bar.
 		setupActionBar();
 	}
@@ -59,7 +60,7 @@ public class EditActivity extends Activity {
 	
 	/** Called when the user clicks the Save button */
 	public void saveRaspcontrolEntry(View view) {
-		RaspDataBaseHelper mDbHelper = new RaspDataBaseHelper(getBaseContext());
+		DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
 		
 		// Gets the data repository in write mode
 		SQLiteDatabase db = mDbHelper.getWritableDatabase();
@@ -71,20 +72,18 @@ public class EditActivity extends Activity {
 		EditText hostname = (EditText) this.findViewById(R.id.editTextHostname);
 		EditText username = (EditText) this.findViewById(R.id.editTextUsername);
 		EditText token = (EditText) this.findViewById(R.id.editTextToken);
-		values.put(RaspcontrolContract.RaspEntry.COLUMN_NAME_ENTRY_NAME, name.getText().toString());
-		values.put(RaspcontrolContract.RaspEntry.COLUMN_NAME_PROTOCOL, protocol.getSelectedItem().toString());
-		values.put(RaspcontrolContract.RaspEntry.COLUMN_NAME_HOSTNAME, hostname.getText().toString());
-		values.put(RaspcontrolContract.RaspEntry.COLUMN_NAME_USERNAME, username.getText().toString());
-		values.put(RaspcontrolContract.RaspEntry.COLUMN_NAME_TOKEN, token.getText().toString());
+		values.put(DatabaseContract.Entry.COLUMN_NAME_ENTRY_NAME, name.getText().toString());
+		values.put(DatabaseContract.Entry.COLUMN_NAME_PROTOCOL, protocol.getSelectedItem().toString());
+		values.put(DatabaseContract.Entry.COLUMN_NAME_HOSTNAME, hostname.getText().toString());
+		values.put(DatabaseContract.Entry.COLUMN_NAME_USERNAME, username.getText().toString());
+		values.put(DatabaseContract.Entry.COLUMN_NAME_TOKEN, token.getText().toString());
 		
 		// Insert the new row, returning the primary key value of the new row
 		long newRowId;
 		newRowId = db.insert(
-				RaspcontrolContract.RaspEntry.TABLE_NAME,
+				DatabaseContract.Entry.TABLE_NAME,
 				"null",
 				values);
-		
-		Log.d("DEBUG", "Data well saved");
 		
 		finish();
 	}

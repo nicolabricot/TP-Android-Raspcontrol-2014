@@ -1,7 +1,7 @@
 package info.devenet.android.raspcontrol;
 
-import info.devenet.android.raspcontrol.database.RaspDataBaseHelper;
-import info.devenet.android.raspcontrol.database.RaspcontrolContract;
+import info.devenet.android.raspcontrol.database.DatabaseHelper;
+import info.devenet.android.raspcontrol.database.DatabaseContract;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,7 +23,7 @@ public class HomeActivity extends Activity {
 	public final static String EXTRA_MESSAGE = "info.devenet.android.raspcontrol.MESSAGE";
 	public final static String EXTRA_ENTRY_ID = "info.devenet.android.raspcontrol.ENTRY_ID";
 
-	private RaspDataBaseHelper mDbHelper;
+	private DatabaseHelper mDbHelper;
 	private SQLiteDatabase db;
 	private LinearLayout list;
 
@@ -30,7 +31,7 @@ public class HomeActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		mDbHelper = new RaspDataBaseHelper(getBaseContext());
+		mDbHelper = new DatabaseHelper(getBaseContext());
 		db = mDbHelper.getReadableDatabase();
 
 		setContentView(R.layout.activity_home);
@@ -41,24 +42,19 @@ public class HomeActivity extends Activity {
 
 	protected void refreshList() {
 
-		list.removeAllViews();
-
 		LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 		// Define a projection that specifies which columns from the database
 		// you will actually use after this query.
-		String[] projection = { RaspcontrolContract.RaspEntry._ID,
-				RaspcontrolContract.RaspEntry.COLUMN_NAME_ENTRY_NAME,
-				RaspcontrolContract.RaspEntry.COLUMN_NAME_HOSTNAME };
+		String[] projection = { DatabaseContract.Entry._ID,
+				DatabaseContract.Entry.COLUMN_NAME_ENTRY_NAME,
+				DatabaseContract.Entry.COLUMN_NAME_HOSTNAME };
 
 		// How you want the results sorted in the resulting Cursor
-		String sortOrder = RaspcontrolContract.RaspEntry.COLUMN_NAME_ENTRY_NAME
+		String sortOrder = DatabaseContract.Entry.COLUMN_NAME_ENTRY_NAME
 				+ " ASC";
 
-		Cursor c = db.query(RaspcontrolContract.RaspEntry.TABLE_NAME, // The
-																		// table
-																		// to
-																		// query
+		Cursor c = db.query(DatabaseContract.Entry.TABLE_NAME,
 				projection, // The columns to return
 				null, // The columns for the WHERE clause
 				null, // The values for the WHERE clause
@@ -69,19 +65,21 @@ public class HomeActivity extends Activity {
 
 		if (c.getCount() > 0) {
 			
+			list.removeAllViews();
+			
 			final HomeActivity mySelf = this;
 
 			c.moveToFirst();
 			do {
 				final long itemId = c
 						.getLong(c
-								.getColumnIndexOrThrow(RaspcontrolContract.RaspEntry._ID));
+								.getColumnIndexOrThrow(DatabaseContract.Entry._ID));
 				String itemName = c
 						.getString(c
-								.getColumnIndexOrThrow(RaspcontrolContract.RaspEntry.COLUMN_NAME_ENTRY_NAME));
+								.getColumnIndexOrThrow(DatabaseContract.Entry.COLUMN_NAME_ENTRY_NAME));
 				String itemHostname = c
 						.getString(c
-								.getColumnIndexOrThrow(RaspcontrolContract.RaspEntry.COLUMN_NAME_HOSTNAME));
+								.getColumnIndexOrThrow(DatabaseContract.Entry.COLUMN_NAME_HOSTNAME));
 				LinearLayout l = (LinearLayout) layoutInflater.inflate(
 						R.layout.raspcontrol_list, null);
 				
@@ -132,24 +130,33 @@ public class HomeActivity extends Activity {
 		getMenuInflater().inflate(R.menu.home, menu);
 		return true;
 	}
-
-	/** Called when the user clicks the Send button */
-	public void sendMessage(View view) {
-		// Do something in response to button
-		Intent intent = new Intent(this, DisplayMessageActivity.class);
-		EditText editText = (EditText) this.findViewById(R.id.edit_message);
-		intent.putExtra(EXTRA_MESSAGE, editText.getText().toString());
-		this.startActivity(intent);
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle item selection
+	    switch (item.getItemId()) {
+	        case R.id.action_settings:
+	            Log.d("DEBUG", "Settings button clicked.");
+	            return true;
+	        case R.id.action_quit:
+	        	quitApplication();
+	        	return true;
+	        case R.id.action_add:
+	        	addHost();
+	        	return true;
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
+		
 	}
 
-	/** Called when the user clicks the Add button */
-	public void addHost(View view) {
+
+	public void addHost() {
 		Intent intent = new Intent(this, EditActivity.class);
 		this.startActivity(intent);
 	}
 
-	/** Called when the user clicks the Quit button */
-	public void quitApplication(View view) {
+	public void quitApplication() {
 		finish();
 	}
 
