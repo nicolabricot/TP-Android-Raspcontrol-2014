@@ -23,7 +23,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class HomeActivity extends Activity {
+public class MainActivity extends Activity {
 
 	private DatabaseHelper mDbHelper;
 	private SQLiteDatabase db;
@@ -35,7 +35,7 @@ public class HomeActivity extends Activity {
 
 		mDbHelper = new DatabaseHelper(getBaseContext());
 
-		setContentView(R.layout.activity_home);
+		setContentView(R.layout.activity_main);
 
 		listLayout = (LinearLayout) findViewById(R.id.linearLayoutRasp);
 
@@ -50,7 +50,7 @@ public class HomeActivity extends Activity {
 		// builder.setStyle(new
 		// NotificationCompat.BigTextStyle().bigText(message));
 		builder.setTicker(ticker);
-		Intent notificationIntent = new Intent(this, HomeActivity.class);
+		Intent notificationIntent = new Intent(this, MainActivity.class);
 		PendingIntent pi = PendingIntent.getActivity(this, 0,
 				notificationIntent, 0);
 		builder.setContentIntent(pi);
@@ -89,7 +89,7 @@ public class HomeActivity extends Activity {
 
 		if (c.getCount() > 0) {
 
-			final HomeActivity mySelf = this;
+			final MainActivity mySelf = this;
 
 			c.moveToFirst();
 			do {

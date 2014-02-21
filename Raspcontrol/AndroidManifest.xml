@@ -1,24 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="info.devenet.android.raspcontrol"
+    android:installLocation="auto"
+    android:sharedUserLabel="@string/app_name"
     android:versionCode="1"
-    android:versionName="1.0" android:installLocation="auto">
+    android:versionName="1.0" >
 
     <uses-sdk
         android:minSdkVersion="10"
         android:targetSdkVersion="17" />
 
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-permission android:name="android.permission.INTERNET" >
+    </uses-permission>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    
+
     <application
+        android:name="Raspcontrol"
         android:allowBackup="true"
         android:debuggable="true"
         android:icon="@drawable/raspcontrol"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" android:logo="@drawable/raspcontrol" android:name="Raspcontrol">
+        android:logo="@drawable/raspcontrol"
+        android:theme="@style/AppTheme" >
         <activity
-            android:name="info.devenet.android.raspcontrol.HomeActivity"
+            android:name="info.devenet.android.raspcontrol.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,22 +33,27 @@
         </activity>
         <activity
             android:name="info.devenet.android.raspcontrol.EditActivity"
-            android:parentActivityName="info.devenet.android.raspcontrol.HomeActivity" >
+            android:parentActivityName="info.devenet.android.raspcontrol.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="info.devenet.android.raspcontrol.HomeActivity" />
         </activity>
         <activity
             android:name="info.devenet.android.raspcontrol.DeleteActivity"
-            android:parentActivityName="info.devenet.android.raspcontrol.HomeActivity" >
+            android:parentActivityName="info.devenet.android.raspcontrol.MainActivity" >
         </activity>
         <activity
             android:name="info.devenet.android.raspcontrol.DisplayEntryActivity"
-            android:parentActivityName="info.devenet.android.raspcontrol.HomeActivity" >
+            android:parentActivityName="info.devenet.android.raspcontrol.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="info.devenet.android.raspcontrol.HomeActivity" />
         </activity>
-        <service android:name="info.devenet.android.raspcontrol.core.RaspService" android:exported="false"></service>
+
+        <service
+            android:name="info.devenet.android.raspcontrol.core.RaspService"
+            android:exported="false" >
+        </service>
     </application>
+
 </manifest>
