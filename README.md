@@ -3,10 +3,11 @@
 Android application to manage Raspcontrol (Raspberry Pi Control Centre)
 
 ![Home of Raspcontrol Android application](raspcontrol_android.png)
+![Display information from Raspcontrol API](raspcontrol_android_details.png)
 
 ***
 
-To use the fuck server, just put the folder `server` in a PHP web server.
+To use the fake server, just put the folder `server` in a PHP web server.
 
 
 You can also use the static api for demonstration:
