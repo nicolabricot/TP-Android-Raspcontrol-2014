@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.UnknownHostException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -31,9 +32,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.Layout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,7 +49,6 @@ public class DisplayEntryActivity extends Activity {
 	private long itemID = 0;
 	private HttpGetterRaspcontrol http;
 	private Activity self = this;
-	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +62,6 @@ public class DisplayEntryActivity extends Activity {
 		Intent intent = getIntent();
 		long itemID = intent.getLongExtra(HomeActivity.EXTRA_ENTRY_ID, 0);
 		this.itemID = itemID;
-
-		this.loadDisplay();
 
 		setContentView(R.layout.activity_display_entry);
 
@@ -88,6 +89,12 @@ public class DisplayEntryActivity extends Activity {
 	protected void onStop() {
 		super.onStop();
 		http.cancel(true);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		this.loadDisplay();
 	}
 
 	@Override
@@ -124,7 +131,7 @@ public class DisplayEntryActivity extends Activity {
 
 	private void loadDisplay() {
 		this.http = new HttpGetterRaspcontrol();
-		
+
 		if (this.itemID > 0) {
 
 			ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -226,7 +233,7 @@ public class DisplayEntryActivity extends Activity {
 					// TODO Auto-generated method stub
 					publishProgress();
 				}
-			}, 0, 2000);
+			}, 0, 1500);
 		}
 
 		@Override
@@ -262,6 +269,9 @@ public class DisplayEntryActivity extends Activity {
 					return "Error " + statusLine.getStatusCode() + ": "
 							+ statusLine.getReasonPhrase();
 				}
+			} catch (UnknownHostException e) {
+				e.printStackTrace();
+				return "Unknow hostname " + e.getLocalizedMessage();
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 				return e.getLocalizedMessage();
@@ -300,7 +310,12 @@ public class DisplayEntryActivity extends Activity {
 
 					Raspcontrol rasp = new Raspcontrol(json);
 					rasp.refreshView(self);
-					
+					/*
+					if (self.findViewById(R.id.entry_layoutSystem)
+							.getVisibility() == View.GONE) {
+						toggleSystem(null);
+					}
+					*/
 				}
 
 			} catch (JSONException e) {
@@ -308,6 +323,60 @@ public class DisplayEntryActivity extends Activity {
 				e.printStackTrace();
 				// finish();
 				Toast.makeText(context, result, Toast.LENGTH_LONG).show();
+			}
+		}
+	}
+
+	public void toggleSystem(View view) {
+		LinearLayout layout = (LinearLayout) findViewById(R.id.entry_layoutSystem);
+		this.toggleOneLevelViews(layout);
+	}
+
+	public void toggleUptime(View view) {
+		LinearLayout layout = (LinearLayout) findViewById(R.id.entry_layoutUptime);
+		this.toggleOneLevelViews(layout);
+	}
+	
+	public void toggleRAM(View view) {
+		LinearLayout layout = (LinearLayout) findViewById(R.id.entry_layoutRAM);
+		this.toggleOneLevelViews(layout);
+	}
+	
+	public void toggleSwap(View view) {
+		LinearLayout layout = (LinearLayout) findViewById(R.id.entry_layoutSwap);
+		this.toggleOneLevelViews(layout);
+	}
+	
+	public void toggleCPU(View view) {
+		LinearLayout layout = (LinearLayout) findViewById(R.id.entry_layoutCPU);
+		this.toggleOneLevelViews(layout);
+	}
+	
+	public void toggleHeat(View view) {
+		LinearLayout layout = (LinearLayout) findViewById(R.id.entry_layoutHeat);
+		this.toggleOneLevelViews(layout);
+	}
+	
+	public void toggleStorage(View view) {
+		LinearLayout layout = (LinearLayout) findViewById(R.id.entry_layoutStorage);
+		this.toggleOneLevelViews(layout);
+	}
+
+	public void toggleNetwork(View view) {
+		LinearLayout layout = (LinearLayout) findViewById(R.id.entry_layoutNetwork);
+		this.toggleOneLevelViews(layout);
+	}
+
+	private void toggleOneLevelViews(LinearLayout layout) {
+		if (layout.getVisibility() == View.VISIBLE) {
+			layout.setVisibility(View.GONE);
+			for (int i = 0; i < layout.getChildCount(); i++) {
+				layout.getChildAt(i).setVisibility(View.GONE);
+			}
+		} else {
+			layout.setVisibility(View.VISIBLE);
+			for (int i = 0; i < layout.getChildCount(); i++) {
+				layout.getChildAt(i).setVisibility(View.VISIBLE);
 			}
 		}
 	}

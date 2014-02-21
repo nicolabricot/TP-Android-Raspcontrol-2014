@@ -216,6 +216,7 @@ public class EditActivity extends Activity {
 			db.update(DatabaseContract.Entry.TABLE_NAME,
 					values, selection, selectionArgs);
 		}
+		this.db.close();
 		finish();
 
 	}

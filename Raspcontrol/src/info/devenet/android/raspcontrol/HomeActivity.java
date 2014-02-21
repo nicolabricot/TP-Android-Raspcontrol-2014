@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -80,9 +81,11 @@ public class HomeActivity extends Activity {
 						.getString(c
 								.getColumnIndexOrThrow(DatabaseContract.Entry.COLUMN_NAME_HOSTNAME));
 				LinearLayout l = (LinearLayout) layoutInflater.inflate(
-						R.layout.raspcontrol_list, null);
+						R.layout.layout_home_list, null);
+				
 				
 				LinearLayout lc = (LinearLayout) l.findViewById(R.id.LinearLayoutContainer);
+				lc.setPadding(0, 0, 0, 10);
 				lc.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -115,7 +118,9 @@ public class HomeActivity extends Activity {
 		}
 		else {
 			TextView tv = new TextView(getBaseContext());
-			tv.setText("No host found...");
+			tv.setLinkTextColor(Color.BLUE);
+			tv.setText("Holy crap, no entry found... \nAdd quickly a new entry :)");
+			tv.setEnabled(true);
 			list.addView(tv);
 		}
 
