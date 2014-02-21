@@ -3,6 +3,7 @@
     <item
         android:id="@+id/action_add"
         android:enabled="true"
+        android:icon="@drawable/ic_action_new"
         android:title="@string/action_add"
         android:visible="true">
     </item>
@@ -15,6 +16,7 @@
     <item
         android:id="@+id/action_quit"
         android:enabled="true"
+        android:icon="@drawable/ic_action_undo"
         android:title="@string/action_quit"
         android:visible="true">
     </item>

@@ -25,7 +25,7 @@ public class HomeActivity extends Activity {
 
 	private DatabaseHelper mDbHelper;
 	private SQLiteDatabase db;
-	private LinearLayout list;
+	private LinearLayout listLayout;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,13 +36,13 @@ public class HomeActivity extends Activity {
 
 		setContentView(R.layout.activity_home);
 
-		list = (LinearLayout) findViewById(R.id.linearLayoutRasp);
+		listLayout = (LinearLayout) findViewById(R.id.linearLayoutRasp);
 
 	}
 
 	protected void refreshList() {
 		
-		list.removeAllViews();
+		listLayout.removeAllViews();
 
 		LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -96,7 +96,7 @@ public class HomeActivity extends Activity {
 					}
 				});
 
-				list.addView(l);
+				listLayout.addView(l);
 				TextView tv = (TextView) l.findViewById(R.id.raspListName);
 				tv.setText(itemName);
 				tv = (TextView) l.findViewById(R.id.raspListHostname);
@@ -121,7 +121,7 @@ public class HomeActivity extends Activity {
 			tv.setLinkTextColor(Color.BLUE);
 			tv.setText("Holy crap, no entry found... \nAdd quickly a new entry :)");
 			tv.setEnabled(true);
-			list.addView(tv);
+			listLayout.addView(tv);
 		}
 
 	}

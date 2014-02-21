@@ -14,7 +14,7 @@
         android:layout_weight="1"
         android:adjustViewBounds="true"
         android:contentDescription="Raspcontrol logo"
-        android:src="@drawable/ic_launcher" />
+        android:src="@drawable/raspcontrol_small" />
 
     <LinearLayout
         android:id="@+id/LinearLayoutContainer"

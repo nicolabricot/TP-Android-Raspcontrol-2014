@@ -3,7 +3,7 @@
     <item
         android:id="@+id/action_refresh"
         android:enabled="true"
-        android:icon="@android:drawable/stat_notify_sync"
+        android:icon="@drawable/ic_action_refresh"
         android:title="@string/action_refresh"
         android:visible="true">
     </item>
@@ -16,7 +16,7 @@
         <item
             android:id="@+id/action_edit"
             android:enabled="true"
-            android:icon="@android:drawable/ic_menu_edit"
+            android:icon="@drawable/ic_action_edit"
             android:title="@string/action_edit"
             android:visible="true">
         </item>

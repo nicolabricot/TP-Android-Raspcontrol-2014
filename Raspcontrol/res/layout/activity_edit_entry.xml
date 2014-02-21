@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="@string/name_placeholder"
-                android:inputType="textCapWords|textAutoCorrect|textShortMessage"
+                android:inputType="textCapSentences|textAutoCorrect|textShortMessage"
                 android:lines="1"
                 android:maxLines="1" >
 

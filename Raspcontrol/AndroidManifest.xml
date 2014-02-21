@@ -14,9 +14,9 @@
     <application
         android:allowBackup="true"
         android:debuggable="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/raspcontrol"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme" android:logo="@drawable/raspcontrol" android:name="Raspcontrol">
         <activity
             android:name="info.devenet.android.raspcontrol.HomeActivity"
             android:label="@string/app_name" >
