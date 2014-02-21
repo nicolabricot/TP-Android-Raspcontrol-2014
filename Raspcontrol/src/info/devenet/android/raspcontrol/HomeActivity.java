@@ -34,14 +34,13 @@ public class HomeActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		mDbHelper = new DatabaseHelper(getBaseContext());
-		db = mDbHelper.getReadableDatabase();
 
 		setContentView(R.layout.activity_home);
 
 		listLayout = (LinearLayout) findViewById(R.id.linearLayoutRasp);
 
 	}
-	
+
 	@SuppressWarnings("unused")
 	private void displayNotification(String text, String ticker, int ID) {
 		NotificationCompat.Builder builder = new Builder(this);
@@ -64,6 +63,8 @@ public class HomeActivity extends Activity {
 		listLayout.removeAllViews();
 
 		LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+		db = mDbHelper.getReadableDatabase();
 
 		// Define a projection that specifies which columns from the database
 		// you will actually use after this query.
@@ -137,6 +138,8 @@ public class HomeActivity extends Activity {
 				});
 
 			} while (c.moveToNext());
+			c.close();
+			db.close();
 		} else {
 			TextView tv = new TextView(getBaseContext());
 			tv.setLinkTextColor(Color.BLUE);
