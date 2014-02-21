@@ -109,9 +109,11 @@ public class RaspService extends IntentService {
 
 				if (!json.has("code")) {
 					// error
+					cancelAll();
 				}
 				if (json.getInt("code") != 200) {
 					// error
+					cancelAll();
 				} else {
 					controller.compare(json);
 				}
@@ -120,12 +122,16 @@ public class RaspService extends IntentService {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				// error
-				timer.cancel();
-				timer.purge();
-				stopSelf();
-				Log.d(Raspcontrol.LOGGER, "Tracker "+ itemID + " cancelled");
+				cancelAll();
 			}
 		}
+	}
+	
+	private void cancelAll() {
+		timer.cancel();
+		timer.purge();
+		stopSelf();
+		Log.d(Raspcontrol.LOGGER, "Tracker "+ itemID + " cancelled");
 	}
 
 }
