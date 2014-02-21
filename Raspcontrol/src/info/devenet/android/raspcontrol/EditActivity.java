@@ -5,13 +5,11 @@ import info.devenet.android.raspcontrol.database.DatabaseContract;
 import android.os.Build;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,7 +45,7 @@ public class EditActivity extends Activity {
 		this.mDbHelper = new DatabaseHelper(getBaseContext());
 
 		Intent intent = getIntent();
-		this.itemID = intent.getLongExtra(HomeActivity.EXTRA_ENTRY_ID, 0);
+		this.itemID = intent.getLongExtra(Raspcontrol.EXTRA_ENTRY_ID, 0);
 
 		if (this.itemID > 0) {
 			setTitle(R.string.title_edit_entry);
@@ -205,6 +203,7 @@ public class EditActivity extends Activity {
 		if (this.itemID == 0) {
 			// Insert the new row, returning the primary key value of the new
 			// row
+			@SuppressWarnings("unused")
 			long newRowId;
 			newRowId = db.insert(DatabaseContract.Entry.TABLE_NAME, "null",
 					values);

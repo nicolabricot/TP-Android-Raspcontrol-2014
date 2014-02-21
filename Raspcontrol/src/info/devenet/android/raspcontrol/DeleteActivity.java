@@ -15,7 +15,7 @@ public class DeleteActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		
 		Intent intent = getIntent();
-		long itemID = intent.getLongExtra(HomeActivity.EXTRA_ENTRY_ID, 0);
+		long itemID = intent.getLongExtra(Raspcontrol.EXTRA_ENTRY_ID, 0);
 		
 		if (itemID > 0) {
 			

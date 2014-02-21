@@ -44,5 +44,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="info.devenet.android.raspcontrol.HomeActivity" />
         </activity>
+        <service android:name="info.devenet.android.raspcontrol.core.RaspService" android:exported="false"></service>
     </application>
 </manifest>

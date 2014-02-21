@@ -18,7 +18,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import info.devenet.android.raspcontrol.core.Raspcontrol;
+import info.devenet.android.raspcontrol.core.RaspService;
+import info.devenet.android.raspcontrol.core.RaspReader;
 import info.devenet.android.raspcontrol.database.DatabaseHelper;
 import info.devenet.android.raspcontrol.database.DatabaseContract;
 import android.net.ConnectivityManager;
@@ -32,14 +33,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.text.Layout;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TableLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.support.v4.app.NavUtils;
 
@@ -49,6 +46,7 @@ public class DisplayEntryActivity extends Activity {
 	private long itemID = 0;
 	private HttpGetterRaspcontrol http;
 	private Activity self = this;
+	private String url = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +58,7 @@ public class DisplayEntryActivity extends Activity {
 		this.context = getApplicationContext();
 
 		Intent intent = getIntent();
-		long itemID = intent.getLongExtra(HomeActivity.EXTRA_ENTRY_ID, 0);
+		long itemID = intent.getLongExtra(Raspcontrol.EXTRA_ENTRY_ID, 0);
 		this.itemID = itemID;
 
 		setContentView(R.layout.activity_display_entry);
@@ -114,19 +112,35 @@ public class DisplayEntryActivity extends Activity {
 		case R.id.action_delete:
 			finish();
 			intent = new Intent(this, DeleteActivity.class);
-			intent.putExtra(HomeActivity.EXTRA_ENTRY_ID, this.itemID);
+			intent.putExtra(Raspcontrol.EXTRA_ENTRY_ID, this.itemID);
 			startActivity(intent);
 			return true;
 		case R.id.action_edit:
 			intent = new Intent(this, EditActivity.class);
-			intent.putExtra(HomeActivity.EXTRA_ENTRY_ID, this.itemID);
+			intent.putExtra(Raspcontrol.EXTRA_ENTRY_ID, this.itemID);
 			startActivity(intent);
 			return true;
 		case R.id.action_refresh:
 			this.loadDisplay();
 			return true;
+		case R.id.action_track_entry:
+			this.trackEntry();
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void trackEntry() {
+		// TODO Auto-generated method stub
+		if (this.url.equals(null)) {
+			Toast.makeText(this, "Impossible to launch tracker", Toast.LENGTH_SHORT).show();
+		} else {
+			Intent i = new Intent(this, RaspService.class);
+			i.putExtra(Raspcontrol.EXTRA_ENTRY_URL, this.url);
+			i.putExtra(Raspcontrol.EXTRA_ENTRY_ID, this.itemID);
+			this.startService(i);
+			Toast.makeText(this, "Tracker is enabled", Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	private void loadDisplay() {
@@ -196,16 +210,16 @@ public class DisplayEntryActivity extends Activity {
 
 				setTitle(itemName);
 
-				String url = itemProtocol + "://" + itemHostname + "/"
-						+ Raspcontrol.API_FILE + Raspcontrol.API_FIRST_ARGUMENT
-						+ Raspcontrol.API_USERNAME + Raspcontrol.API_EQUAL
-						+ itemUsername + Raspcontrol.API_OTHER_ARGUMENT
-						+ Raspcontrol.API_TOKEN + Raspcontrol.API_EQUAL
-						+ itemToken + Raspcontrol.API_OTHER_ARGUMENT
-						+ Raspcontrol.API_DATA + Raspcontrol.API_EQUAL
-						+ Raspcontrol.API_DATA_ALL;
+				this.url = itemProtocol + "://" + itemHostname + "/"
+						+ RaspReader.API_FILE + RaspReader.API_FIRST_ARGUMENT
+						+ RaspReader.API_USERNAME + RaspReader.API_EQUAL
+						+ itemUsername + RaspReader.API_OTHER_ARGUMENT
+						+ RaspReader.API_TOKEN + RaspReader.API_EQUAL
+						+ itemToken + RaspReader.API_OTHER_ARGUMENT
+						+ RaspReader.API_DATA + RaspReader.API_EQUAL
+						+ RaspReader.API_DATA_ALL;
 
-				http.execute(url);
+				http.execute(this.url);
 
 			} else {
 				// we have a probem huston!
@@ -308,7 +322,8 @@ public class DisplayEntryActivity extends Activity {
 							Toast.LENGTH_LONG).show();
 				} else {
 
-					Raspcontrol rasp = new Raspcontrol(json);
+					RaspReader rasp = new RaspReader();
+					rasp.parse(json);
 					rasp.refreshView(self);
 					/*
 					if (self.findViewById(R.id.entry_layoutSystem)

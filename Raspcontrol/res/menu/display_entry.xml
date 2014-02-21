@@ -8,11 +8,20 @@
         android:visible="true">
     </item>
 
+    <item
+        android:id="@+id/action_track_entry"
+        android:enabled="true"
+        android:icon="@drawable/ic_action_alarms"
+        android:title="@string/action_track_entry"
+        android:visible="true">
+    </item>
+    
     <group
         android:id="@+id/action_group_ed"
         android:enabled="true"
         android:menuCategory="secondary"
-        android:visible="true" >
+        android:visible="true"
+        android:title="@string/action_edit" >
         <item
             android:id="@+id/action_edit"
             android:enabled="true"

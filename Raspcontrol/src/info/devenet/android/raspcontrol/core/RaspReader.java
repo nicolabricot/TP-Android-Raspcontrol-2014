@@ -4,7 +4,6 @@ import info.devenet.android.raspcontrol.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,7 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class Raspcontrol {
+public class RaspReader {
 
 	public static final String API_FILE = "api.php";
 	public static final String API_USERNAME = "username";
@@ -39,10 +38,14 @@ public class Raspcontrol {
 	private ArrayList<HashMap<String, String>> hdd;
 	private HashMap<String, String> net_connections;
 	private HashMap<String, String> net_ethernet;
-	private HashMap<String, String> users;
+	// private HashMap<String, String> users;
 	private ArrayList<HashMap<String, String>> services;
 
-	public Raspcontrol(JSONObject json) throws JSONException {
+	public RaspReader() {
+
+	}
+
+	public void parse(JSONObject json) throws JSONException {
 
 		this.rbpi = new HashMap<String, String>();
 		this.memory_ram = new HashMap<String, String>();
@@ -50,6 +53,12 @@ public class Raspcontrol {
 		this.cpu_usage = new HashMap<String, String>();
 		this.cpu_heat = new HashMap<String, String>();
 		this.hdd = new ArrayList<HashMap<String, String>>();
+		this.net_connections = new HashMap<String, String>();
+		this.net_ethernet = new HashMap<String, String>();
+		this.services = new ArrayList<HashMap<String, String>>();
+
+		HashMap<String, String> hTemp;
+		JSONObject jTemp;
 
 		JSONObject rbpi_data = json.getJSONObject("rbpi");
 		this.rbpi.put("hostname", rbpi_data.getString("hostname"));
@@ -99,8 +108,6 @@ public class Raspcontrol {
 				Integer.toString(heat_data.getInt("percentage")));
 
 		JSONArray hdd_data = json.getJSONArray("hdd");
-		HashMap<String, String> hTemp;
-		JSONObject jTemp;
 		for (int i = 0; i < hdd_data.length(); i++) {
 			hTemp = new HashMap<String, String>();
 			jTemp = (JSONObject) hdd_data.get(i);
@@ -114,8 +121,57 @@ public class Raspcontrol {
 			this.hdd.add(hTemp);
 		}
 
+		JSONObject net_data = json.getJSONObject("net");
+		JSONObject net_connections = net_data.getJSONObject("connections");
+		this.net_connections.put("connections",
+				net_connections.getString("connections"));
+		this.net_connections.put("alert", net_connections.getString("alert"));
+		JSONObject net_ethernet = net_data.getJSONObject("ethernet");
+		this.net_ethernet.put("up",
+				Double.toString(net_ethernet.getDouble("up")));
+		this.net_ethernet.put("down",
+				Double.toString(net_ethernet.getDouble("down")));
+		this.net_ethernet.put("total",
+				Double.toString(net_ethernet.getDouble("total")));
+
+		JSONArray services_data = json.getJSONArray("services");
+		for (int i = 0; i < services_data.length(); i++) {
+			hTemp = new HashMap<String, String>();
+			jTemp = (JSONObject) services_data.get(i);
+			hTemp.put("name", jTemp.getString("name"));
+			hTemp.put("status", jTemp.getString("status"));
+			this.services.add(hTemp);
+		}
+
 	}
 
+	public void compare(JSONObject json) throws JSONException {
+
+		if (this.rbpi != null) {
+
+			JSONObject memory_data = json.getJSONObject("memory");
+			String memory_ram_alert = memory_data.getJSONObject("ram")
+					.getString("alert");
+			if (!this.memory_ram.get("alert").equals(memory_ram_alert)) {
+				Log.d("RaspReader", "Memory RAM alert updated!");
+			}
+			String memory_swap_alert = memory_data.getJSONObject("swap")
+					.getString("alert");
+			if (!this.memory_swap.get("alert").equals(memory_swap_alert)) {
+				Log.d("RaspReader", "Memory Swap alert updated!");
+			}
+
+			JSONObject cpu_data = json.getJSONObject("cpu");
+			String cpu_usage_alert = cpu_data.getJSONObject("usage").getString(
+					"alert");
+			if (!this.memory_swap.get("alert").equals(cpu_usage_alert)) {
+				Log.d("RaspReader", "CPU alert updated!");
+			}
+		}
+
+		this.parse(json);
+	}
+	
 	public void refreshView(Activity a) {
 		TextView tv;
 		ProgressBar pgb;
@@ -205,8 +261,10 @@ public class Raspcontrol {
 			tv.setText(disk.get("total"));
 			tv = (TextView) modelLayout.findViewById(R.id.storage_name);
 			tv.setTextColor(this.alertToColor(disk.get("alert")));
-			if ((storageAlert.equals("success") && !disk.get("alert").equals("success"))
-				|| (storageAlert.equals("warning") && disk.get("alert").equals("danger"))) {
+			if ((storageAlert.equals("success") && !disk.get("alert").equals(
+					"success"))
+					|| (storageAlert.equals("warning") && disk.get("alert")
+							.equals("danger"))) {
 				storageAlert = disk.get("alert");
 			}
 			modelLayout.setPadding(0, 0, 0, 4);
@@ -220,6 +278,10 @@ public class Raspcontrol {
 		tv.setText(rbpi.get("internal"));
 		tv = (TextView) a.findViewById(R.id.entry_tv_externalIP);
 		tv.setText(rbpi.get("external"));
+		tv = (TextView) a.findViewById(R.id.entry_tv_connections);
+		tv.setText(net_connections.get("connections"));
+		tv = (TextView) a.findViewById(R.id.entry_titleNetwork);
+		tv.setTextColor(this.alertToColor(storageAlert));
 
 	}
 

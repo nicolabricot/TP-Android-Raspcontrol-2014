@@ -30,6 +30,7 @@
     <string name="action_edit">Edit</string>
     <string name="loading">loading</string>
     <string name="action_refresh">Refresh</string>
+    <string name="action_track_entry">Track</string>
     
     <string name="title_add_entry">New entry</string>
     <string name="title_edit_entry">Edit entry</string>

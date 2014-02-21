@@ -18,6 +18,7 @@
     <string name="name_placeholder">Petit nom sympa</string>
     <string name="button_delete">Supprimer</string>
    <string name="action_edit">Modifier</string>
+   <string name="action_track_entry">Suivre</string>
 
     <string-array name="protocols">
         <item>http</item>
